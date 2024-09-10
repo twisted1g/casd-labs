@@ -20,7 +20,9 @@
 
     public void PrintComplexNumber()
     {
-        Console.WriteLine($"\nReal part:{this.RealPart} Imaginary part:{this.ImaginaryPart}");
+        string NumberPrint = "\n" + this.RealPart.ToString();
+        NumberPrint += this.ImaginaryPart >= 0 ? "+"+this.ImaginaryPart.ToString()+"i": this.ImaginaryPart.ToString()+"i" ;
+        Console.WriteLine(NumberPrint);
     }
 
     public void ModuleComplexNumber()
@@ -88,15 +90,28 @@ partial class Program
     public static void Main(string[] args)
     { 
         ComplexNumber complexNumber = new ComplexNumber();
-
+        Console.WriteLine("Rress m to show menu");
         bool ExitFromWhile = false;
         while (!ExitFromWhile)
         {
             Console.WriteLine("Enter command: ");
             var command = Console.ReadKey().KeyChar;
 
+            string menu = $"\nMenu:\n" +
+                $"Change number - a\n" +
+                $"Sum numbers - b\n" +
+                $"Difference numbers - c\n" +
+                $"Multiply numbers - d\n" +
+                $"Division numbers - e\n" +
+                $"Module - f\n" +
+                $"Arg - g\n" +
+                $"Print - h\n" +
+                $"Exit - q\\Q\n";
             switch (command)
             {
+                case 'm':
+                    Console.WriteLine(menu);
+                    break;
                 case 'a':
                     complexNumber.ChangeComlexNumber();
                     break;
