@@ -165,8 +165,14 @@ namespace Sort
             }
         }
 
-        public static int[] TreeSort(int[] array)
+        public static void TreeSort(int[] array)
         {
+            array = treeSort(array);
+        }
+
+        public static int[] treeSort(int[] array)
+        {
+
             var treeNode = new TreeNode(array[0]);
             for (int i = 1; i < array.Length; i++)
             {
