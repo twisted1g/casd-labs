@@ -25,7 +25,7 @@ namespace SortingApplication
             pane.CurveList.Clear();
 
             pane.XAxis.Title.Text = "Размер массива, шт";
-            pane.YAxis.Title.Text = "Время, мс.";
+            pane.YAxis.Title.Text = "Время выполнения, мс.";
             pane.Title.Text = "Исследование зависимости времени сортировок от размера массива";
         }
 
@@ -317,11 +317,11 @@ namespace SortingApplication
                     listShakerSort.Add(n, totalTimesShakerSort[i]/5);
                     listGnomeSort.Add(n, totalTimesGnomeSort[i]/5);
                 }
-                LineItem curve = pane.AddCurve("сортировка пузырьком", listBubbleSort, Color.Blue, SymbolType.None);
-                curve = pane.AddCurve("сортировка вставками", listInsertionSort, Color.Red, SymbolType.None);
-                curve = pane.AddCurve("сортировка выбором", listSelectionSort, Color.Green, SymbolType.None);
-                curve = pane.AddCurve("шейкерная сортировка", listShakerSort, Color.Yellow, SymbolType.None);
-                curve = pane.AddCurve("гномья сортировка", listGnomeSort, Color.Black, SymbolType.None);
+                LineItem curve = pane.AddCurve("пузырьком", listBubbleSort, Color.Blue, SymbolType.None);
+                curve = pane.AddCurve("вставками", listInsertionSort, Color.Red, SymbolType.None);
+                curve = pane.AddCurve("выбором", listSelectionSort, Color.Green, SymbolType.None);
+                curve = pane.AddCurve("шейкерная", listShakerSort, Color.Yellow, SymbolType.None);
+                curve = pane.AddCurve("гномья", listGnomeSort, Color.Black, SymbolType.None);
 
                 pane.XAxis.Scale.Min = 0;
                 pane.XAxis.Scale.Max = 10000;
@@ -354,8 +354,8 @@ namespace SortingApplication
                     listShellSort.Add(n, totalTimesShellSort[i] / 5);
                     //listTreeSort.Add(n, totalTimesTreeSort[i] / 5);
                 }
-                LineItem curve = pane.AddCurve("битонная сортировка", listBitonicSort, Color.Blue, SymbolType.None);
-                curve = pane.AddCurve("сортировка Шелла", listShellSort, Color.Red, SymbolType.None);
+                LineItem curve = pane.AddCurve("битонная", listBitonicSort, Color.Blue, SymbolType.None);
+                curve = pane.AddCurve("Шелла", listShellSort, Color.Red, SymbolType.None);
                 //curve = pane.AddCurve("сортировка деревом", listTreeSort, Color.Green, SymbolType.None);
 
                 pane.XAxis.Scale.Min = 0;
@@ -400,12 +400,12 @@ namespace SortingApplication
 
 
                 }
-                LineItem curve = pane.AddCurve("сортировка расчёской", listCombSort, Color.Blue, SymbolType.None);
-                curve = pane.AddCurve("пирамидальная сортировка", listHeapSort, Color.Red, SymbolType.None);
+                LineItem curve = pane.AddCurve("расчёской", listCombSort, Color.Blue, SymbolType.None);
+                curve = pane.AddCurve("пирамидальная", listHeapSort, Color.Red, SymbolType.None);
                 //curve = pane.AddCurve("быстрая сортировка", listQuickSort, Color.Green, SymbolType.None);
-                curve = pane.AddCurve("сортировка слиянием", listMergeSort, Color.Black, SymbolType.None);
-                curve = pane.AddCurve("сортировка подсчётом", listCountingSort, Color.Yellow, SymbolType.None);
-                curve = pane.AddCurve("поразрядная сортировка", listRadixSort, Color.Orange, SymbolType.None);
+                curve = pane.AddCurve("слиянием", listMergeSort, Color.Black, SymbolType.None);
+                curve = pane.AddCurve("подсчётом", listCountingSort, Color.Yellow, SymbolType.None);
+                curve = pane.AddCurve("поразрядная", listRadixSort, Color.Orange, SymbolType.None);
 
                 pane.XAxis.Scale.Min = 0;
                 pane.XAxis.Scale.Max = 1000000;
