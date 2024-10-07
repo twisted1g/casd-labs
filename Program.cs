@@ -82,9 +82,41 @@ class RPN
             case "cos":
                 return Math.Cos(first);
 
+            case "tg":
+                return Math.Tan(first);
+
+            case "log":
+                if (first > 0)
+                    return Math.Log(first);
+                throw new ArgumentException();
+
+            case "ln":
+                if (first > 0)
+                    return Math.Log(first, Math.E);
+                throw new ArgumentException();
+
+            case "min":
+                return Math.Min(first, second);
+
+            case "max":
+                return Math.Max(first, second);
+
+            case "%":
+                return first % second;
+
+            case "&":
+                if (second != 0)
+                    return Math.Round(first / second);
+                throw new DivideByZeroException();
+
+            case "tranck":
+                return Math.Round(first);
+
+            case "exp":
+                return Math.E;
+
             default:
                 throw new ArgumentException();
-            
         }
     }
 
@@ -244,23 +276,22 @@ class RPN
                     numbers.Push(Calculate(op, firstNumber, secondNumber));
                 }
             }
-
         }
         return numbers.Pop();
     }
-
 }
-
 
 
 class Program
 {
     public static void Main(string[] args)
     {
-        RPN polish = new RPN("cos(sqrt(4))^2");
-        polish.ConvertToRPN();
-        Console.WriteLine(polish.postExpr);
-        Console.WriteLine(polish.CalculateRPN());
-
+        for (int i = 0; i < args.Length; i++)
+        {
+            RPN polish = new RPN(args[i]);
+            polish.ConvertToRPN();
+            Console.WriteLine(polish.postExpr);
+            Console.WriteLine(polish.CalculateRPN());
+        }
     }
 }
