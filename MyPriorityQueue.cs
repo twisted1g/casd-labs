@@ -1,7 +1,7 @@
-﻿using ArrayList;
-using MyPQ;
+﻿
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 
 class Comparator<T> where T : IComparable<T>
 {
@@ -16,9 +16,9 @@ class Comparator<T> where T : IComparable<T>
 
 class MyPriorityQueue<T> where T : IComparable<T>
 {
-    private List<T> queue;
+    private List<T> queue = new(0);
 
-    private int Size
+    public int Size
     {
         get
         {
@@ -148,7 +148,7 @@ class MyPriorityQueue<T> where T : IComparable<T>
         }
         catch(Exception e) 
         {
-            Console.WriteLine(e.Message);
+            throw new IndexOutOfRangeException();
         }
     }
 
@@ -164,18 +164,77 @@ class MyPriorityQueue<T> where T : IComparable<T>
         return false;
     }
 
-    public int RemoveAll(T[] array)
+    public void RemoveAll(T[] array)
     {
-        queue.RemoveAll(x => queue.Contains(x));
+
+        queue.RemoveAll(x => array.Contains(x));
     }
 
+    public void RetainAll(T[] array)
+    {
+        queue.RemoveAll(x => !array.Contains(x));
+    }
 
     public T[] ToArray()
     {
         return (T[]) queue.ToArray();
     }
 
-   
+    public void ToArray(T[] array)
+    {
+        if (array is null)
+        {
+            array = new T[Size];
+        }
+        queue.CopyTo(array, 0);
+    }
+
+    public T Element()
+    {
+        if (Size == 0) throw new IndexOutOfRangeException();
+        return queue[0];
+    }
+
+    public bool Offer(T item)
+    {
+        Add(item);
+        return true;
+    }
+
+    public T? Peek()
+    {
+        if (Size == 0)
+        {
+            return default(T);
+        }
+        return queue[0]; 
+
+    }
+
+    public T? Poll()
+    {
+        if (Size == 0)
+        {
+            return default(T);
+        }
+        T res = queue[0];
+        RemoveAt(0);
+
+        return res;
+
+    }
+
+    public override string ToString()
+    {
+        string res = "";
+        foreach(T item in queue)
+        {
+            res += item;
+            res += " ";
+        }
+        
+        return res;
+    } 
 }
 
 
@@ -187,8 +246,15 @@ class Program
     {
         int[] array = new int[] { 8, 6 , 3 , 2, 1};
         MyPriorityQueue<int> queue = new MyPriorityQueue<int>(array);
-
         
+        Console.WriteLine(queue);
+
+        array = new int[] { 8, 6, 1 };
+
+        queue.RetainAll(array);
+
+        Console.WriteLine(queue.Size);
+
     }
 }
 
