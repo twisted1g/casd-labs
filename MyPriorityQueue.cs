@@ -5,12 +5,10 @@ using System.Globalization;
 
 class Comparator<T> where T : IComparable<T>
 {
-    public int Compare(T first, T second)
+    public int CompareTo(T first, T second)
     {
         return first.CompareTo(second);
     }
-
-
 }
 
 
@@ -63,12 +61,12 @@ class MyPriorityQueue<T> where T : IComparable<T>
             rightChild = 2 * i + 2;
             maxChild = i;
 
-            if (leftChild < Size && comparator.Compare(queue[leftChild], queue[maxChild]) > 0)
+            if (leftChild < Size && comparator.CompareTo(queue[leftChild], queue[maxChild]) > 0)
             {
                 maxChild = leftChild;
             }
 
-            if (rightChild < Size && comparator.Compare(queue[rightChild], queue[maxChild]) > 0)
+            if (rightChild < Size && comparator.CompareTo(queue[rightChild], queue[maxChild]) > 0)
             {
                 maxChild = rightChild;
             }
@@ -95,7 +93,7 @@ class MyPriorityQueue<T> where T : IComparable<T>
 
         int i = Size - 1;
         int parent = (i - 1) / 2;
-        while (i > 0 && comparator.Compare(queue[i], queue[parent]) > 0)
+        while (i > 0 && comparator.CompareTo(queue[i], queue[parent]) > 0)
         {
             T tmp = queue[i];
             queue[i] = queue[parent];
