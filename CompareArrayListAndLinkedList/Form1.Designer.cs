@@ -32,6 +32,7 @@
             this.zedGraph = new ZedGraph.ZedGraphControl();
             this.comboBox = new System.Windows.Forms.ComboBox();
             this.button = new System.Windows.Forms.Button();
+            this.textBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // zedGraph
@@ -79,17 +80,27 @@
             this.button.Visible = false;
             this.button.Click += new System.EventHandler(this.button_Click);
             // 
+            // textBox
+            // 
+            this.textBox.Location = new System.Drawing.Point(1015, 112);
+            this.textBox.Name = "textBox";
+            this.textBox.Size = new System.Drawing.Size(215, 22);
+            this.textBox.TabIndex = 3;
+            this.textBox.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1304, 819);
+            this.Controls.Add(this.textBox);
             this.Controls.Add(this.button);
             this.Controls.Add(this.comboBox);
             this.Controls.Add(this.zedGraph);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -98,6 +109,7 @@
         private ZedGraph.ZedGraphControl zedGraph;
         private System.Windows.Forms.ComboBox comboBox;
         private System.Windows.Forms.Button button;
+        private System.Windows.Forms.TextBox textBox;
     }
 }
 

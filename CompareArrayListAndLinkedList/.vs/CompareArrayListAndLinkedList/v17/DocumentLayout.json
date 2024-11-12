@@ -9,10 +9,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{5ACFF212-D6B8-405A-826D-41BF3ED6B28A}|CompareArrayListAndLinkedList.csproj|D:\\Study\\Code\\c#\\CompareArrayListAndLinkedList\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{5ACFF212-D6B8-405A-826D-41BF3ED6B28A}|CompareArrayListAndLinkedList.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5ACFF212-D6B8-405A-826D-41BF3ED6B28A}|CompareArrayListAndLinkedList.csproj|d:\\study\\code\\c#\\comparearraylistandlinkedlist\\globalusing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ACFF212-D6B8-405A-826D-41BF3ED6B28A}|CompareArrayListAndLinkedList.csproj|solutionrelative:globalusing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,26 +30,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GlobalUsing.cs",
-              "DocumentMoniker": "D:\\Study\\Code\\c#\\CompareArrayListAndLinkedList\\GlobalUsing.cs",
-              "RelativeDocumentMoniker": "GlobalUsing.cs",
-              "ToolTip": "D:\\Study\\Code\\c#\\CompareArrayListAndLinkedList\\GlobalUsing.cs",
-              "RelativeToolTip": "GlobalUsing.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAHAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T07:29:15.586Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "D:\\Study\\Code\\c#\\CompareArrayListAndLinkedList\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "D:\\Study\\Code\\c#\\CompareArrayListAndLinkedList\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAA4AAAAAAAAAAAAxwB0AAAAAAAAA",
+              "ViewState": "AQIAAHYAAAAAAAAAAAAkwOkAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-12T07:07:59.104Z",
               "EditorCaption": ""

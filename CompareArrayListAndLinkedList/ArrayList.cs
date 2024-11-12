@@ -74,18 +74,7 @@
 
         public void Remove(object obj)
         {
-            if (Contains(obj))
-            {
-                T[] copyElementData = new T[--size];
-                int ind = 0;
-                foreach (T item in elementData)
-                {
-                    if (obj.Equals(item)) continue;
-                    else copyElementData[ind++] = item;
-
-                }
-                elementData = copyElementData;
-            }
+            RemoveAt(IndexOf(obj));
         }
 
         public void RemoveAll(T[] array)
@@ -200,11 +189,21 @@
             return -1;
         }
 
-        public T Remove(int index)
+        public void RemoveAt(int index)
         {
-            T item = Get(index);
-            Remove(item);
-            return item;
+            if (index >= 0 && index < size)
+            {
+                T[] copyElementData = new T[size];
+                int ind = 0;
+                for (int i = 0; i < size; i++)
+                {
+                    if (i == index) continue;
+                    else copyElementData[ind++] = elementData[i];
+
+                }
+                elementData = copyElementData;
+                size--;
+            }
         }
 
         public void Set(int index, T item)
