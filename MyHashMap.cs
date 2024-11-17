@@ -1,46 +1,50 @@
-﻿namespace HashMap;
+﻿
+namespace HashMap;
 
 class Entry<K, V>
 {
-    public K? Key { get; set; }
+    public K Key { get; set; }
 
-    public V? Value { get; set; }
+    public V Value { get; set; }
 
-    public Entry<K, V>? Next { get; set; }
-
-    public Entry(K? key, V? value)
+    public Entry(K key, V value)
     {
         Key = key;
         Value = value;
-        Next = null;
     }
-    public override int GetHashCode()
-    {
-        return Key!.GetHashCode();
-    }
-
 }
 
 class MyHashMap<K, V> : IEnumerable<Entry<K, V>>
 {
-    Entry<K, V>[] table;
-    int size;
-    readonly double loadFactor;
-
-    MyHashMap() : this(16) { }
-
-    MyHashMap(int initialCapacity) : this(initialCapacity, 0.75) { }
-
-    MyHashMap(int initialCapacity, double loadFactor)
+    MyLinkedList<Entry<K, V>>[] table;
+    public int Size
     {
-        table = new Entry<K, V>[initialCapacity];
-        this.loadFactor = loadFactor;
+        get
+        {
+            int size = 0;
+            foreach (var entry in this)
+            {
+                size++;
+            }
+            return size;
+        }
+    }
+
+    private readonly double _loadFactor;
+
+    public MyHashMap() : this(16) { }
+
+    public MyHashMap(int initialCapacity) : this(initialCapacity, 0.75) { }
+
+    public MyHashMap(int initialCapacity, double loadFactor)
+    {
+        table = new MyLinkedList<Entry<K, V>>[initialCapacity];
+        this._loadFactor = loadFactor;
     }
 
     public void Clear()
     {
-        table = new Entry<K, V>[1];
-        size = 0;
+        table = new MyLinkedList<Entry<K, V>>[1];
     }
 
     public bool ContainsKey(K key)
@@ -55,15 +59,68 @@ class MyHashMap<K, V> : IEnumerable<Entry<K, V>>
         return false;
     }
 
+    public bool ContainsValue(V value)
+    {
+        foreach (var entry in this)
+        {
+            if (entry.Value!.Equals(value))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HashSet<Entry<K, V>> EntrySet()
+    {
+        HashSet<Entry<K, V>> hashSet = new HashSet<Entry<K, V>>();
+        foreach(var entry in this)
+        {
+            hashSet.Add(entry);
+        }
+        return hashSet;
+    }
+
+    public V? Get(K key)
+    {
+        foreach (var entry in this)
+        {
+            if (entry.Key!.Equals(key))
+            {
+                return entry.Value;
+            }
+        }
+        return default(V?);
+    }
+
+    public bool IsEmpty()
+    {
+        return Size == 0;
+    }
+
+    public HashSet<K> KeySet()
+    {
+        HashSet<K> hashSet = new HashSet<K>();
+        foreach (var entry in this)
+        {
+            hashSet.Add(entry.Key);
+        }
+        return hashSet;
+    }
+
     public void Put(K key, V value)
     {
-        double currentLoad = (size + 1) / table.Length;
-        if (currentLoad >= loadFactor)
+        double currentLoad = Size / table.Length;
+        if (currentLoad >= _loadFactor)
         {
-            Entry<K, V>[] newTable = new Entry<K, V>[table.Length * 2];
-            foreach (var enrty in this)
+            MyLinkedList<Entry<K, V>>[] newTable = new MyLinkedList<Entry<K, V>>[table.Length * 2];
+            foreach (var list in table)
             {
-                newTable[enrty.Key!.GetHashCode() % table.Length] = enrty;
+                if (list != null)
+                {
+                    Entry<K, V> entry = list.GetFirst()!;
+                    newTable[entry.Key!.GetHashCode() % table.Length] = list;
+                }
             }
         }
 
@@ -72,46 +129,76 @@ class MyHashMap<K, V> : IEnumerable<Entry<K, V>>
 
         if (table[bucketIndex] is null)
         {
-            table[bucketIndex] = new Entry<K, V>(key, value);
+            table[bucketIndex] = new MyLinkedList<Entry<K, V>>();
+            table[bucketIndex].Add(new Entry<K, V>(key, value));
         }
         else
         {
-            var pointer = table[bucketIndex];
-            while (pointer is not null)
+            foreach (var entry in table[bucketIndex])
             {
-                if (table[bucketIndex].Key!.Equals(key))
+                if (entry.Key!.Equals(key))
                 {
-                    table[bucketIndex].Value = value;
+                    entry.Value = value;
                     return;
                 }
-                pointer = pointer.Next;
             }
+            table[bucketIndex].Add(new Entry<K, V>(key, value));
+        }
+    }
 
-
-
-
+    public void Remove(K key)
+    {
+        if (ContainsKey(key))
+        {
+            MyLinkedList<Entry<K, V>>[] newTable = new MyLinkedList<Entry<K, V>>[table.Length];
+            foreach (var list in table)
+            {
+                if (list != null)
+                {
+                    foreach (var entry in list)
+                    {
+                        if (entry.Key!.Equals(key))
+                        {
+                            list.Remove(entry);
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
     public IEnumerator<Entry<K, V>> GetEnumerator()
     {
-        foreach (var entry in table)
+        foreach (var list in table)
         {
-            if (entry == null) continue;
-
-            var step = entry;
-            while (step != null)
+            if (list != null)
             {
-                yield return step;
-                step = step.Next;
+                foreach (var entry in list)
+                {
+                    yield return entry; 
+                }
             }
         }
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
+    IEnumerator<Entry<K, V>> IEnumerable<Entry<K, V>>.GetEnumerator()
     {
-        return ((IEnumerable<Entry<K, V>>)this).GetEnumerator();
+        return GetEnumerator();
     }
 
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
+    public override string ToString()
+    {
+        string result = "";
+        foreach (var entry in this)
+        {
+            result += $"{entry.Key}: {entry.Value}\n";
+        }
+        return result;
+    }
 }
