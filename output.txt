@@ -1,0 +1,4 @@
+y: (Float, 20)
+x: (Int, 10)
+z: (Double, 30)
+
