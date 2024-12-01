@@ -1,0 +1,16 @@
+﻿global using System;
+global using System.Collections;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Diagnostics;
+global using System.ComponentModel;
+global using System.Data;
+global using System.Drawing;
+global using System.Text;
+global using System.Threading.Tasks;
+global using System.Windows.Forms;
+global using ZedGraph;
+global using LinkedList;
+global using HashMap;
+global using BinarySearchTree;
+global using TreeMap;
