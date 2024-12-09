@@ -234,145 +234,157 @@ namespace RBTree
 
         public void Remove(T value)
         {
-            if (Contains(value))
+            if (Root == null || !Contains(value))
             {
-                RBTreeNode<T> node = Root!;
-
-                while (!node.Value.Equals(value))
-                {
-                    if (node.Value.CompareTo(value) < 0)
-                    {
-                        node = node.Right!;
-                    }
-                    else node = node.Left!;
-                }
-
-                if (node.Left is null && node.Right is null)
-                {
-                    if (node.Equals(Root))
-                    {
-                        Root = null;
-                    }
-                    else
-                    {
-                        if (node.Parent!.Value.CompareTo(node.Value) > 0)
-                        {
-                            node.Parent!.Left = null;
-                        }
-                        else
-                        {
-                            node.Parent!.Right = null;
-                        }
-                    }
-                    return;
-                }
-                RBTreeNode<T>? minNode = null;
-                if (node.Left is not null && node.Right is null)
-                {
-                    node.Parent = node.Left;
-                }
-                else if (node.Right is not null && node.Left is null)
-                {
-                    node.Parent = node.Right;
-                }
-                else if (node.Left is not null && node.Right is not null)
-                {
-                    minNode = MinNode(node);
-                    if (minNode.Right is not null)
-                    {
-                        minNode.Right.Parent = minNode.Parent;
-                    }
-                    if (minNode.Equals(Root))
-                    {
-                        Root = minNode.Right;
-                    }
-                    else
-                    {
-                        minNode.Parent!.Left = minNode.Right;
-                    }
-                }
-
-                if (minNode is not null)
-                {
-                    if (!minNode.Equals(node))
-                    {
-                        node.Color = minNode.Color;
-                        node.Value = minNode.Value;
-                    }
-                }
-
-                if (minNode is null || minNode.Color == Color.Black)
-                {
-                    FixDeleting(node);
-                }
+                return;
             }
+
+            RBTreeNode<T> nodeToDelete = FindNode(Root, value);
+            RBTreeNode<T>? replacementNode;
+
+            if (nodeToDelete.Left == null || nodeToDelete.Right == null)
+            {
+                replacementNode = nodeToDelete.Left ?? nodeToDelete.Right;
+            }
+            else
+            {
+                RBTreeNode<T> minNode = MinNode(nodeToDelete.Right);
+                nodeToDelete.Value = minNode.Value; 
+                nodeToDelete.Color = minNode.Color; 
+                replacementNode = minNode.Right; 
+                nodeToDelete = minNode;
+            }
+
+            if (replacementNode != null)
+            {
+                replacementNode.Parent = nodeToDelete.Parent;
+            }
+
+            if (nodeToDelete.Parent == null)
+            {
+                Root = replacementNode;
+            }
+            else if (nodeToDelete == nodeToDelete.Parent.Left)
+            {
+                nodeToDelete.Parent.Left = replacementNode;
+            }
+            else
+            {
+                nodeToDelete.Parent.Right = replacementNode;
+            }
+
+            if (nodeToDelete.Color == Color.Black)
+            {
+                FixDeleting(replacementNode);
+            }
+            Size--;
         }
 
-        private void FixDeleting(RBTreeNode<T> node)
+        private RBTreeNode<T> FindNode(RBTreeNode<T> currentNode, T value)
         {
-            while (node != null && node.Color == Color.Black && !node.Equals(Root))
+            while (currentNode != null)
+            {
+                int comparison = value.CompareTo(currentNode.Value);
+                if (comparison == 0)
+                {
+                    return currentNode;
+                }
+                currentNode = comparison < 0 ? currentNode.Left : currentNode.Right;
+            }
+            return null!;
+        }
+
+        private void FixDeleting(RBTreeNode<T>? node)
+        {
+            while (node != null && node != Root && node.Color == Color.Black)
             {
                 RBTreeNode<T> parent = node.Parent!;
-                if (node.Value.CompareTo(parent.Value) < 0)
+                RBTreeNode<T> brother;
+
+                if (node == parent.Left)
                 {
-                    RBTreeNode<T> brother = node.Parent!.Right!;
+                    brother = parent.Right!;
                     if (brother.Color == Color.Red)
                     {
                         brother.Color = Color.Black;
                         parent.Color = Color.Red;
                         LeftRotate(parent);
+                        brother = parent.Right!;
                     }
-                    if (brother.Left is not null && brother.Right is not null && brother.Right.Color == Color.Black && brother.Left.Color == Color.Black)
+
+                    if ((brother.Left == null || brother.Left.Color == Color.Black) &&
+                        (brother.Right == null || brother.Right.Color == Color.Black))
                     {
                         brother.Color = Color.Red;
+                        node = parent;
                     }
                     else
                     {
-                        if (brother.Right is not null && brother.Right.Color == Color.Black)
+                        if (brother.Right == null || brother.Right.Color == Color.Black)
                         {
-                            if (brother.Left is not null) brother.Left.Color = Color.Black;
+                            if (brother.Left != null)
+                            {
+                                brother.Left.Color = Color.Black;
+                            }
                             brother.Color = Color.Red;
                             RightRotate(brother);
+                            brother = parent.Right!;
                         }
+
                         brother.Color = parent.Color;
                         parent.Color = Color.Black;
-                        if (brother.Right is not null) brother.Right.Color = Color.Black;
+                        if (brother.Right != null)
+                        {
+                            brother.Right.Color = Color.Black;
+                        }
                         LeftRotate(parent);
-                        node = Root!;
+                        node = Root;
                     }
                 }
                 else
                 {
-                    RBTreeNode<T> brother = node.Left!.Right!;
+                    brother = parent.Left!;
                     if (brother.Color == Color.Red)
                     {
                         brother.Color = Color.Black;
                         parent.Color = Color.Red;
                         RightRotate(parent);
+                        brother = parent.Left!;
                     }
-                    if (brother.Left is not null && brother.Right is not null && brother.Right.Color == Color.Black && brother.Left.Color == Color.Black)
+
+                    if ((brother.Left == null || brother.Left.Color == Color.Black) &&
+                        (brother.Right == null || brother.Right.Color == Color.Black))
                     {
                         brother.Color = Color.Red;
+                        node = parent;
                     }
                     else
                     {
-                        if (brother.Left is not null && brother.Left.Color == Color.Black)
+                        if (brother.Left == null || brother.Left.Color == Color.Black)
                         {
-                            if (brother.Right is not null) brother.Right.Color = Color.Black;
+                            if (brother.Right != null)
+                            {
+                                brother.Right.Color = Color.Black;
+                            }
                             brother.Color = Color.Red;
                             LeftRotate(brother);
+                            brother = parent.Left!;
                         }
+
                         brother.Color = parent.Color;
                         parent.Color = Color.Black;
-                        if (brother.Left is not null) brother.Left.Color = Color.Black;
+                        if (brother.Left != null)
+                        {
+                            brother.Left.Color = Color.Black;
+                        }
                         RightRotate(parent);
-                        node = Root!;
+                        node = Root;
                     }
                 }
-
             }
-            node!.Color = Color.Black;
-            Root!.Color = Color.Black;
+
+            if (node != null)
+                node.Color = Color.Black;
         }
 
         public RBTreeNode<T> MinNode(RBTreeNode<T> node)

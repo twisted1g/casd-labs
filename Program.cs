@@ -16,6 +16,9 @@ class Program
         //tree.Insert(16);
         //tree.Insert(0);
         //Console.WriteLine(tree);
+
+        //tree.Remove(7);
+        //Console.WriteLine(tree);
         //Console.WriteLine(tree.Root!.Value);
 
         //Console.WriteLine(tree.Contains(1));
@@ -25,7 +28,6 @@ class Program
         //Console.WriteLine(tree.Contains(0));
         //Console.WriteLine(tree.Contains(-1));
 
-        //tree.Remove(7);
         //Console.WriteLine(tree);
         //Console.WriteLine(tree.Root!.Value);
 
@@ -38,11 +40,14 @@ class Program
 
         //treeSet.Clear();
         //Console.WriteLine(treeSet);
+        treeSet.Remove(2);
+        treeSet.Remove(3);
+        Console.WriteLine(treeSet);
 
         Console.WriteLine(treeSet.ContainsAll(new int[] { 1, 2, 3 }));
         Console.WriteLine(treeSet.Contains(7));
         treeSet.AddAll(new int[] { 7, 8, 9 });
-        //treeSet.Remove(5);
+        Console.WriteLine(treeSet);
         int[] array = treeSet.ToArray();
         foreach (int i in array) Console.Write(i + " ");
         Console.WriteLine();
