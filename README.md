@@ -1,4 +1,4 @@
-# Крисс-Кросс #
+![image](https://github.com/user-attachments/assets/7837c3c7-21d5-4e35-864f-f5358464e0af)# Крисс-Кросс #
 
 ## Постановка задачи ##
 
@@ -399,3 +399,264 @@ private bool CanBeAdd(Word currentWord, Word newWord, int x, int y)
 Для каждой возможной позиции нового слова проверяется корректность размещения, подсчитывается количество пересечений. Вычисляется новая плотность таблицы. Если новая плотность лучше текущей, выбирается эта позиция. Если нашлось подходящее место, слово добавляется в таблицу.
 
 ---
+Теперь рассмотрим реализацию графического интерфейса. Необходимо реализовать поле для ввода слов, добавление слов из файла и отрисовку таблицы.
+Собственно основной интерфейс - это окно WPF с графической областью (`Canvas`) и элементами для взаимодействия(кнопки и поле для ввода).
+
+Основной функционал:
+``` c#
+public partial class MainWindow : Window
+    {
+        List<string> words;
+        WordArea table;
+
+        double canvasWidth;
+        double canvasHeight;
+
+        double boxSize = 40;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            words = new List<string>();
+        }
+
+        public void SubmitButton_Click(object sender, RoutedEventArgs e)
+        {
+            WordArea wordArea = new WordArea();
+            if (!wordArea.AddAllWords(words))
+            {
+                MessageBox.Show("Слово не может быть добавлено");
+                return;
+            }
+
+            canvasWidth = Canvas.ActualWidth;
+            canvasHeight = Canvas.ActualHeight;
+            double x = (canvasWidth - wordArea.Width * boxSize) / 2;
+            double y = (canvasHeight - wordArea.Height * boxSize) / 2;
+            this.table = wordArea;
+
+            PaintTable(wordArea, x, y);
+        }
+...
+```
+
+`AddAndDrawWordButton_Click()` - пользователь вводит слово в текстовое поле. Если слово допустимо, оно добавляется в список, очищается текстовое поле, а затем вызывается метод `SubmitButton_Click()`.
+
+```c#
+public void AddAndDrawWordButton_Click(object sender, RoutedEventArgs e)
+{
+    string newWord = WordInput.Text.Trim();
+    if (!string.IsNullOrEmpty(newWord) && newWord != "Введите слово")
+    {
+        words.Add(newWord.ToUpper());
+        WordInput.Clear();
+
+        SubmitButton_Click(sender, e);
+    }
+    else
+    {
+        MessageBox.Show("Введите слово!");
+    }
+}
+```
+
+`LoadAndDrawWordsButton_Click()` - открывает окно выбора файла; пользователь может загрузить файл.
+
+```c#
+public void LoadAndDrawWordsButton_Click(object sender, RoutedEventArgs e)
+{
+    Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+    {
+        Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*"
+    };
+
+    if (openFileDialog.ShowDialog() == true)
+    {
+        try
+        {
+            var fileWords = File.ReadAllLines(openFileDialog.FileName);
+            foreach (var word in fileWords)
+            {
+                string trimmedWord = word.Trim().ToUpper();
+                if (!string.IsNullOrEmpty(trimmedWord))
+                {
+                    words.Add(trimmedWord);
+                }
+            }
+
+            SubmitButton_Click(sender, e);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка при загрузке файла: {ex.Message}");
+        }
+    }
+}
+```
+
+ `ClearTableButton_Click()` - очищает список слов, таблицу  и графическую область.
+``` c#
+public void ClearTableButton_Click(object sender, RoutedEventArgs e)
+{
+    words.Clear();
+    table = null;
+    Canvas.Children.Clear();
+}
+```
+
+Обработка графики:
+
+`SubmitButton_Click()` -  создаётся объект `WordArea()`, который отвечает за размещение слов. Если размещение всех слов невозможно, показывается сообщение об ошибке.
+
+```c#
+public void SubmitButton_Click(object sender, RoutedEventArgs e)
+{
+    WordArea wordArea = new WordArea();
+    if (!wordArea.AddAllWords(words))
+    {
+        MessageBox.Show("Слово не может быть добавлено");
+        return;
+    }
+
+    canvasWidth = Canvas.ActualWidth;
+    canvasHeight = Canvas.ActualHeight;
+    double x = (canvasWidth - wordArea.Width * boxSize) / 2;
+    double y = (canvasHeight - wordArea.Height * boxSize) / 2;
+    this.table = wordArea;
+
+    PaintTable(wordArea, x, y);
+}
+```
+
+```c#
+private void Canvas_Size_Changed(object sender, SizeChangedEventArgs e)
+{
+    if (table != null)
+    {
+        canvasHeight = Canvas.ActualHeight;
+        canvasWidth = Canvas.ActualWidth;
+        double x = (canvasWidth - table.Width * boxSize) / 2;
+        double y = (canvasHeight - table.Height * boxSize) / 2;
+
+        PaintTable(table, x, y);
+    }
+}
+```
+
+`PaintTable()` - для каждого слова в таблице вычисляет координаты начальной клетки и последующих клеток слова, затем рисует прямоугольник для каждой клетки и добавляет буквы слова в виде текстовых блоков, центрированных внутри клеток.
+
+```c#
+public void PaintTable(WordArea table, double x, double y)
+{
+    List<Word> words = table.Words;
+    Canvas.Children.Clear();
+    Rectangle R;
+    foreach (Word word in words)
+    {
+        double X = x + word.X * boxSize;
+        double Y = y + word.Y * boxSize;
+        int isVert = word.Orientation == Orientation.Vertical ? 1 : 0;
+        for (int i = 0; i < word.Count; i++)
+        {
+            double letterX = X + i * boxSize * (Math.Abs(isVert - 1));
+            double letterY = Y + i * boxSize * isVert;
+
+            R = new Rectangle
+            {
+                Width = boxSize,
+                Height = boxSize,
+                Stroke = new SolidColorBrush(Colors.Black),
+                StrokeThickness = 1,
+                Fill = new SolidColorBrush(Colors.White)
+            };
+            Canvas.SetLeft(R, letterX);
+            Canvas.SetTop(R, letterY);
+            Canvas.Children.Add(R);
+
+            TextBlock textBlock = new TextBlock
+            {
+                Text = word[i].ToString(),
+                FontSize = 12,
+                Foreground = new SolidColorBrush(Colors.Black),
+                Width = boxSize,
+                Height = boxSize,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            Canvas.SetLeft(textBlock, letterX);
+            Canvas.SetTop(textBlock, letterY);
+            Canvas.Children.Add(textBlock);
+        }
+    }
+}
+```
+
+`WordInput_GotFocus()` и `WordInput_LostFocus()` - управляют состоянием текстового поля. 
+
+```c#
+private void WordInput_GotFocus(object sender, RoutedEventArgs e)
+{
+    if (WordInput.Text == "Введите слово")
+    {
+        WordInput.Text = "";
+        WordInput.Foreground = new SolidColorBrush(Colors.Black);
+    }
+}
+
+private void WordInput_LostFocus(object sender, RoutedEventArgs e)
+{
+    if (string.IsNullOrWhiteSpace(WordInput.Text))
+    {
+        WordInput.Text = "Введите слово";
+        WordInput.Foreground = new SolidColorBrush(Colors.Gray);
+    }
+}
+```
+
+
+Окно программы выглядит следующим образом:
+
+``` XML
+<Window x:Class="CrissCross.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CrissCross" Height="700" Width="1000">
+    <Grid>
+        <Canvas Name="Canvas" Background="LightSkyBlue" SizeChanged="Canvas_Size_Changed" Margin="0,50,0,0" />
+
+        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" LastChildFill="False" Margin="5">
+            <TextBox Name="WordInput" Width="200" Margin="5" Text="Введите слово" Foreground="Gray"
+                     GotFocus="WordInput_GotFocus" LostFocus="WordInput_LostFocus" />
+
+            <Button Content="Добавить слово" Width="200" Height="30" Margin="5" Click="AddAndDrawWordButton_Click" />
+
+            <Button Content="Загрузить из файла" Width="200" Height="30" Margin="5" Click="LoadAndDrawWordsButton_Click" />
+
+            <Button Content="Очистить таблицу" Width="150" Height="30" Margin="5" Click="ClearTableButton_Click" />
+        </DockPanel>
+    </Grid>
+</Window>
+```
+## Апробация работы программы ##
+
+Рассмотрим работу программы для различных входных данных.
+
+Для начала добавим слова из файла `text.txt`
+
+![image](https://github.com/user-attachments/assets/378bd609-2753-4242-83cf-adc334522353)
+
+![image](https://github.com/user-attachments/assets/06527fb8-41e9-4535-81f9-91c56b4362cb)
+
+Теперь очистим полученную таблицу и добавим слова вручную.
+
+![image](https://github.com/user-attachments/assets/af418014-60e2-4459-acc2-78fc79a2f4cb)
+
+Однако слово "НОС" уже не может быть добавлено, программа выведет сообщение об ошибке. 
+
+![image](https://github.com/user-attachments/assets/0799db60-f78e-4645-b47a-8f0b4dafecab)
+
+
+
+
