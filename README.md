@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/7837c3c7-21d5-4e35-864f-f5358464e0af)# Крисс-Кросс #
+# Крисс-Кросс #
 
 ## Постановка задачи ##
 
