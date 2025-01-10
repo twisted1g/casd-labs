@@ -31,16 +31,98 @@
 используя текстовую графику или графический интерфейс).
 
 Обработка особых случаев:
-- Если для заданного списка слов невозможно построить связную схему крисскросса, программа должна сообщить об этом.
+- Если для заданного списка слов невозможно построить связную схему крисс-кросса, программа должна сообщить об этом.
 
 ## Описание решения ##
 Проведем краткое описание решения поставленной задачи.
 
-Для построенния схемы крисс-кросс, реализуем алгоритм такой, что поиск оптимального размещения основывается на минимизации плотности и увеличении пересечений.
+Для построения схемы крисс-кросс, реализуем алгоритм такой, что поиск оптимального размещения основывается на минимизации плотности и увеличении пересечений.
 
 Главная задача алгоритма заключается в максимальном использование пересечений букв, при минимизации увеличения площади таблицы.
 Помимо этого будем учитывать различные ограничения для предотвращения конфликтов с уже размещенными словами.
 
 ## Описание реализации ##
 Теперь более подробно рассмотрим сам алгоритм и его реализацию.
-Для начала создадим
+
+Для начала создадим класс Word, который содержит данные о слове, его расположении на плоскости и ориентации (горизонтальной или вертикальной).
+
+``` c#
+
+public class Word
+{
+    private string _word;
+    private int _x, _y;
+    private Orientation _orientation;
+    public Orientation Orientation => _orientation; 
+    public int X => _x;
+    public int Y => _y;
+
+    public int Count => _word.Length;
+    public Word(string word, int x, int y, Orientation orientation)
+    {
+        _word = word;
+        _x = x;
+        _y = y;
+        _orientation = orientation;
+    }
+
+    public char this[int index]
+    {
+        get { return _word[index]; }
+    }
+}
+
+```
+
+Поля:
+- `_word` - слово.
+- `_x` и `_y` - координаты начала слова на плоскости.
+- `_orientation` - ориентация слова.
+
+Свойства:
+- `Orientation` -  возвращает ориентацию слова.
+- `X` и `Y` — возвращают координаты начала слова.
+- `Count`— возвращает длину слова.
+
+Конструктор:
+- `Word(string word, int x, int y, Orientation orientation)`
+
+Индексатор:
+- `word[index]` - возвращает символ слова с указанным индексом.
+
+Для определения ориентации воспользуемся enum 
+
+``` c#
+﻿public enum Orientation
+{
+    Horizontal,
+    Vertical
+}
+```
+
+Далее создадим основной класс WordArea, в котором будут размещаться слова.
+``` c#
+public class WordArea
+{
+    private List<Word> _words;
+    private int _height, _width;
+
+    private int _numberOfWord;
+    private int _sizeWordArea;
+    private int _intersectWordCount;
+
+    public int Height => _height;
+    public int Width => _width;
+    public List<Word> Words => _words;
+
+    public WordArea()
+    {
+        _words = new List<Word>();
+        _height = 0;
+        _width = 0;
+        _numberOfWord = 0;
+        _sizeWordArea = 0;
+        _intersectWordCount = 0;
+    }
+}
+```
